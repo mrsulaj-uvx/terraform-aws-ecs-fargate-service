@@ -109,11 +109,13 @@ resource "aws_security_group_rule" "egress" {
 }
 
 resource "aws_security_group_rule" "ingress_through_http_and_https" {
-  for_each                 = var.additional_lbs
+  for_each                 = {
+    for cp in distinct([for lb in var.additional_lbs: lb.container_port]): tostring(cp) => cp
+  }
   security_group_id        = aws_security_group.ecs_tasks_sg.id
   type                     = "ingress"
-  from_port                = each.value.container_port
-  to_port                  = each.value.container_port
+  from_port                = each.value
+  to_port                  = each.value
   protocol                 = "tcp"
   source_security_group_id = var.lb_aws_security_group_lb_access_sg_id
 }
