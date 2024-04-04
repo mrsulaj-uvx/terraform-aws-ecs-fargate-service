@@ -12,6 +12,12 @@ variable "vpc_id" {
   description = "ID of the VPC"
 }
 
+variable "enable_efs_volume" {
+  description = "Enable attaching EFS volume to cluster."
+  type        = bool
+  default     = false
+}
+
 #------------------------------------------------------------------------------
 # AWS ECS SERVICE
 #------------------------------------------------------------------------------

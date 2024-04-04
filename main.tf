@@ -1,8 +1,4 @@
 #------------------------------------------------------------------------------
-# AWS LOAD BALANCER
-#------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------
 # AWS ECS SERVICE
 #------------------------------------------------------------------------------
 resource "aws_ecs_service" "service" {
@@ -120,6 +116,16 @@ resource "aws_security_group_rule" "ingress_through_http_and_https" {
   to_port                  = each.value.container_port
   protocol                 = "tcp"
   source_security_group_id = var.lb_aws_security_group_lb_access_sg_id
+}
+
+resource "aws_security_group_rule" "ingress_efs" {
+  count = var.enable_efs_volume ? 1 : 0
+  security_group_id        = aws_security_group.ecs_tasks_sg.id
+  type                     = "ingress"
+  from_port                = 2049
+  to_port                  = 2049
+  protocol                 = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 module "ecs-autoscaling" {
